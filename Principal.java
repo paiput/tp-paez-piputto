@@ -64,7 +64,7 @@ public class Principal {
 		String matriculaBuscada = validarMatricula(s);
 		int indiceMultaBuscada = existeMatricula(multas, matriculaBuscada);
 		if (indiceMultaBuscada != -1) {
-			System.out.println("---- Datos Multa matrícula " + matriculaBuscada + " ----");
+			System.out.println("---- Datos Multa matrícula nro " + matriculaBuscada + " ----");
 			System.out.println("Marca y modelo: " + multas[indiceMultaBuscada][1]);
 			System.out.println("Propietario: " + multas[indiceMultaBuscada][2]);
 			System.out.println("Descripción de la multa: " + multas[indiceMultaBuscada][3]);
@@ -92,7 +92,6 @@ public class Principal {
 		System.out.print("Ingrese descripción de la multa: ");
 		multa[3] = s.nextLine();
 		multa[4] = validarPrecioMatricula(s);
-		multa[5] = "no";
 		return multa;
 	}
 	
@@ -101,10 +100,37 @@ public class Principal {
 		multas[cantMultas] = multa;
 	}
 	
+	public static void pagarMulta(Scanner s, String[][] multas, int cantMultas) {
+		String matricula = validarMatricula(s);
+		int indiceMatricula = existeMatricula(multas, matricula);
+		final int COLUMNAS = multas[0].length; // Para que después no tenga que calcularlo en cada vuelta de i
+		if (indiceMatricula != -1) {
+			for (int i=indiceMatricula; i<cantMultas; i++) {
+				for (int j=0; j<COLUMNAS; j++) {
+					multas[i][j] = multas[i+1][j];
+				}
+			}
+			for (int i=0; i<COLUMNAS; i++) {				
+				multas[cantMultas-1][i] = "";
+			}
+			System.out.println("Multa pagada correctamente");
+		} else {
+			System.out.println("La matrícula ingresada no tiene ninguna multa registrada");
+		}
+	}
+	
+	public static void mostrarMultasPendientes(String[][] multas, int cantMultas) {
+		System.out.println("---- Multas pendientes -----");
+		for (int i=0; i<cantMultas; i++) {
+			System.out.println(i + ". " + multas[i][0] + " - " + multas[i][1]);
+		}
+	}
+	
 	public static void generarAccion(Scanner s, String[][] multas, int codigoOperacion, int cantMultas) {
 		switch (codigoOperacion) {
 		case 1:
 			// consultar multas de un veh. por matricula
+			buscarMulta(s, multas);
 			break;
 		case 2:
 			agregarMulta(s, multas, cantMultas);
@@ -115,6 +141,7 @@ public class Principal {
 			break;
 		case 4:
 			// mostrar multas pendientes
+			mostrarMultasPendientes(multas, cantMultas); // VER NOMBRE DE LA FUNCION
 			break;
 		case 5:
 			break;
@@ -123,10 +150,15 @@ public class Principal {
 
 	public static void main(String[] args) {
 		Scanner s = new Scanner(System.in);
-		String[][] multas = new String[200][6];
+		String[][] multas = new String[200][5];
 		int cantMultas = 0;
+		
 		// solicitar multas iniciales
+		// ...
+		
 		// menu(cantMultas);
+		
+		
 		s.close();
 	}	
 }
